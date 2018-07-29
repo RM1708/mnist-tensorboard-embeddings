@@ -43,6 +43,9 @@ def generate_embeddings():
 
     # Input set for Embedded TensorBoard visualization
     # Performed with cpu to conserve memory and processing power
+    #embedding does not appear to be used. Commenting it out however
+    #results in "ValueError: No variables to save".
+    #It is needed below.
     with tf.device("/cpu:0"):
         embedding = tf.Variable(tf.stack(mnist.test.images[:FLAGS.max_steps], axis=0), trainable=False, name='embedding')
 
@@ -53,9 +56,11 @@ def generate_embeddings():
 
     # Add embedding tensorboard visualization. Need tensorflow version
     # >= 0.12.0RC0
+    #See https://www.tensorflow.org/versions/r1.1/get_started/embedding_viz#setup
+    #
     config = projector.ProjectorConfig()
     embed= config.embeddings.add()
-    embed.tensor_name = 'embedding:0'
+    embed.tensor_name = 'embedding:0' #Causes embedding to be used
     embed.metadata_path = os.path.join(FLAGS.log_dir + '/projector/metadata.tsv')
     embed.sprite.image_path = os.path.join(FLAGS.data_dir + '/mnist_10k_sprite.png')
 
@@ -66,6 +71,8 @@ def generate_embeddings():
     saver.save(sess, os.path.join(
         FLAGS.log_dir, 'projector/a_model.ckpt'), global_step=FLAGS.max_steps)
 
+    sess.close()
+
 def generate_metadata_file():
     # Import data
     mnist = input_data.read_data_sets(FLAGS.data_dir,
@@ -74,7 +81,10 @@ def generate_metadata_file():
     def save_metadata(file):
         with open(file, 'w') as f:
             for i in range(FLAGS.max_steps):
+                #For slice steps/strides see: 
+                #pg 203 pf Lutz, "Learning Python"
                 c = np.nonzero(mnist.test.labels[::1])[1:][0][i]
+                print('{}\n'.format(c))
                 f.write('{}\n'.format(c))
 
     save_metadata(FLAGS.log_dir + '/projector/metadata.tsv')
@@ -82,10 +92,14 @@ def generate_metadata_file():
 def main(_):
     if tf.gfile.Exists(FLAGS.log_dir + '/projector'):
         tf.gfile.DeleteRecursively(FLAGS.log_dir + '/projector')
-        tf.gfile.MkDir(FLAGS.log_dir + '/projector')
     tf.gfile.MakeDirs(FLAGS.log_dir  + '/projector') # fix the directory to be created
+    tf.gfile.MkDir(FLAGS.log_dir + '/projector')
     generate_metadata_file()
     generate_embeddings()
+
+    print("\n\tDONE:: ", __file__, "\n")
+    tf.reset_default_graph()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -94,9 +108,11 @@ if __name__ == '__main__':
                         help='If true, uses fake data for unit testing.')
     parser.add_argument('--max_steps', type=int, default=10000,
                         help='Number of steps to run trainer.')
-    parser.add_argument('--data_dir', type=str, default='/Users/norman/Documents/workspace/mnist-tensorboard-embeddings/mnist_data',
+    parser.add_argument('--data_dir', type=str, \
+                        default='/home/rm/tmp/data/mnist_data/',
                         help='Directory for storing input data')
-    parser.add_argument('--log_dir', type=str, default='/Users/norman/Documents/workspace/mnist-tensorboard-embeddings/logs',
+    parser.add_argument('--log_dir', type=str, \
+                        default='/home/rm/logs/mnist_t-sne',
                         help='Summaries log directory')
     FLAGS, unparsed = parser.parse_known_args()
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

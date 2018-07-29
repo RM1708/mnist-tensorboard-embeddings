@@ -22,6 +22,9 @@ It demonstrates the functionality of every TensorBoard dashboard.
 
 Updated by Norman Heckscher to use display Embedding Visualization.
 https://www.tensorflow.org/versions/r0.12/how_tos/embedding_viz/index.html#tensorboard-embedding-visualization
+
+My repo Forked from https://github.com/normanheckscher/mnist-tensorboard-embeddings
+
 """
 from __future__ import absolute_import
 from __future__ import division
@@ -51,16 +54,23 @@ def train():
 
     # Input placeholders
     with tf.name_scope('input'):
-        x = tf.placeholder(tf.float32, [None, 784], name='x-input')
-        y_ = tf.placeholder(tf.float32, [None, 10], name='y-input')
+        input_images = tf.placeholder(tf.float32, [None, 784], name='input_images-input')
+        input_labels = tf.placeholder(tf.float32, [None, 10], name='y-input')
 
     # Input set for Embedded TensorBoard visualization
     # Performed with cpu to conserve memory and processing power
     with tf.device("/cpu:0"):
+        #There is a cautionary that embedding is not used.
+        #That is not correct. It is used below (code snip reproduced here)
+            #config = projector.ProjectorConfig()
+            #embed = config.embeddings.add()
+            #embed.tensor_name = 'embedding:0' <<<<<<<<<<<<<<<<
+        #
+        #See https://www.tensorflow.org/versions/r1.1/get_started/embedding_viz#setup
         embedding = tf.Variable(tf.stack(mnist.test.images[:FLAGS.max_steps], axis=0), trainable=False, name='embedding')
 
     with tf.name_scope('input_reshape'):
-        image_shaped_input = tf.reshape(x, [-1, 28, 28, 1])
+        image_shaped_input = tf.reshape(input_images, [-1, 28, 28, 1])
         tf.summary.image('input', image_shaped_input, 10)
 
     # We can't initialize these variables to 0 - the network will get stuck.
@@ -109,7 +119,7 @@ def train():
             tf.summary.histogram('activations', activations)
             return activations
 
-    hidden1 = nn_layer(x, 784, 500, 'layer1')
+    hidden1 = nn_layer(input_images, 784, 500, 'layer1')
 
     with tf.name_scope('dropout'):
         keep_prob = tf.placeholder(tf.float32)
@@ -122,7 +132,7 @@ def train():
     with tf.name_scope('cross_entropy'):
         # The raw formulation of cross-entropy,
         #
-        # tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(tf.softmax(y)),
+        # tf.reduce_mean(-tf.reduce_sum(input_labels * tf.log(tf.softmax(y)),
         #                               reduction_indices=[1]))
         #
         # can be numerically unstable.
@@ -130,7 +140,7 @@ def train():
         # So here we use tf.nn.softmax_cross_entropy_with_logits on the
         # raw outputs of the nn_layer above, and then average across
         # the batch.
-        diff = tf.nn.softmax_cross_entropy_with_logits(logits=y, labels=y_)
+        diff = tf.nn.softmax_cross_entropy_with_logits_v2(logits=y, labels=input_labels)
         with tf.name_scope('total'):
             cross_entropy = tf.reduce_mean(diff)
     tf.summary.scalar('cross_entropy', cross_entropy)
@@ -141,7 +151,7 @@ def train():
 
     with tf.name_scope('accuracy'):
         with tf.name_scope('correct_prediction'):
-            correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+            correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(input_labels, 1))
         with tf.name_scope('accuracy'):
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     tf.summary.scalar('accuracy', accuracy)
@@ -158,9 +168,10 @@ def train():
     writer = tf.summary.FileWriter(FLAGS.log_dir + '/projector', sess.graph)
     # Add embedding tensorboard visualization. Need tensorflow version
     # >= 0.12.0RC0
+    #See https://www.tensorflow.org/versions/r1.1/get_started/embedding_viz#setup
     config = projector.ProjectorConfig()
     embed = config.embeddings.add()
-    embed.tensor_name = 'embedding:0'
+    embed.tensor_name = 'embedding:0' #embedding used here
     embed.metadata_path = os.path.join(FLAGS.log_dir + '/projector/metadata.tsv')
     embed.sprite.image_path = os.path.join(FLAGS.data_dir + '/mnist_10k_sprite.png')
     # Specify the width and height of a single thumbnail.
@@ -179,7 +190,7 @@ def train():
         else:
             xs, ys = mnist.test.images, mnist.test.labels
             k = 1.0
-        return {x: xs, y_: ys, keep_prob: k}
+        return {input_images: xs, input_labels: ys, keep_prob: k}
 
     for i in range(FLAGS.max_steps):
         if i % 10 == 0:  # Record summaries and test-set accuracy
@@ -208,6 +219,8 @@ def train():
     train_writer.close()
     test_writer.close()
 
+    sess.close()
+
 
 def generate_metadata_file():
     # Import data
@@ -228,26 +241,32 @@ def main(_):
         tf.gfile.DeleteRecursively(FLAGS.log_dir + '/train')
         tf.gfile.DeleteRecursively(FLAGS.log_dir + '/test')
         tf.gfile.DeleteRecursively(FLAGS.log_dir + '/projector')
-        tf.gfile.MkDir(FLAGS.log_dir + '/projector')
     tf.gfile.MakeDirs(FLAGS.log_dir)
+    tf.gfile.MkDir(FLAGS.log_dir + '/projector')
     generate_metadata_file()
     train()
+
+    print("\n\tDONE:: ", __file__, "\n")
+    tf.reset_default_graph()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--fake_data', nargs='?', const=True, type=bool,
                         default=False,
                         help='If true, uses fake data for unit testing.')
-    parser.add_argument('--max_steps', type=int, default=10000,
+    parser.add_argument('--max_steps', type=int, default=3000,      #10000,
                         help='Number of steps to run trainer.')
     parser.add_argument('--learning_rate', type=float, default=0.001,
                         help='Initial learning rate')
     parser.add_argument('--dropout', type=float, default=0.9,
                         help='Keep probability for training dropout.')
-    parser.add_argument('--data_dir', type=str, default='/Users/norman/Documents/workspace/mnist-tensorboard-embeddings/mnist_data',
+    parser.add_argument('--data_dir', type=str, \
+                        default='/home/rm/tmp/data/mnist_data/',
                         help='Directory for storing input data')
-    parser.add_argument('--log_dir', type=str, default='/Users/norman/Documents/workspace/mnist-tensorboard-embeddings/logs',
+    parser.add_argument('--log_dir', type=str, \
+                        default='/home/rm/logs/mnist-tensorboard-embeddings',
                         help='Summaries log directory')
     FLAGS, unparsed = parser.parse_known_args()
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
+
 

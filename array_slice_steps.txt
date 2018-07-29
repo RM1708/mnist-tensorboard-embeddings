@@ -1,0 +1,266 @@
+###################################################
+#These were interactive checks done on 
+"/home/rm/Sandlot-TensorFlow/mnist-tensorboard-embeddings/mnist_t-sne.py" 
+#For slice steps/strides see: pg 203 pf Lutz, "Learning Python"
+###################################################
+ipdb> 
+ipdb> mnist.test.labels.shape
+(10000, 10)
+
+ipdb> (mnist.test.labels[::1]).shape
+(10000, 10)
+
+ipdb> mnist.test.labels[::1].shape
+(10000, 10)
+
+ipdb> mnist.test.labels[:3, :1]         #The comma now makes 1 into top limit of the 2nd index
+array([[0.],
+       [0.],
+       [0.]])
+
+ipdb> mnist.test.labels[:3, :1].shape
+(3, 1)
+
+ipdb> mnist.test.labels[: :1].shape     #Without the comma 1 represents the step size of the slice
+(10000, 10)
+
+ipdb> mnist.test.labels[: :2].shape     #Slice step of 2 halves dimension 0
+(5000, 10)
+
+ipdb> mnist.test.labels[:, :1].shape    #Now 1 slices the 2nd dimension
+(10000, 1)
+
+ipdb> mnist.test.labels[: :1].shape
+(10000, 10)
+
+ipdb> mnist.test.labels[:1 :1].shape
+(1, 10)
+
+ipdb> mnist.test.labels[:1 :].shape
+(1, 10)
+
+ipdb> mnist.test.labels[:1, :1].shape
+(1, 1)
+
+ipdb> mnist.test.labels[: :1].shape
+(10000, 10)
+
+ipdb> mnist.test.labels[: :].shape
+(10000, 10)
+
+ipdb> mnist.test.labels[::].shape
+(10000, 10)
+
+ipdb> mnist.test.labels[:1:].shape
+(1, 10)
+ipdb> mnist.test.labels[:, :1].shape
+(10000, 1)
+
+ipdb> mnist.test.labels[:, :10].shape
+(10000, 10)
+
+ipdb> mnist.test.labels[:, :11].shape
+(10000, 10)
+
+ipdb> mnist.test.labels[:, :100].shape
+(10000, 10)
+
+ipdb> mnist.test.labels[:, :9].shape
+(10000, 9)
+ipdb> mnist.test.labels[:1:]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:1 :]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:1, :]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:1, :1]
+array([[0.]])
+
+ipdb> mnist.test.labels[:2, :]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:2 :]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:2:]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:2:1]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:2:2]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:2:3]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:2 :3]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:2, :3]
+array([[0., 0., 0.],
+       [0., 0., 1.]])
+
+ipdb> mnist.test.labels[:2 :3]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:2 :10]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:2 :100]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.]])
+
+ipdb> mnist.test.labels[:2, :100]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:2, :1]
+array([[0.],
+       [0.]])
+
+ipdb> mnist.test.labels[:2 :1]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:5 :1]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:5:1]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:5:1][1:]
+array([[0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:10:1][1:]
+array([[0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
+       [0., 0., 0., 0., 0., 1., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.]])
+
+ipdb> mnist.test.labels[:10:1][:]
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
+       [0., 0., 0., 0., 0., 1., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.]])
+
+ipdb> mnist.test.labels[:10:1][1:]
+array([[0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
+       [0., 0., 0., 0., 0., 1., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.]])
+
+ipdb> mnist.test.labels[:10:1][1:][0]
+array([0., 0., 1., 0., 0., 0., 0., 0., 0., 0.])
+mnist.test.labels[:10:1][1:][0]
+ipdb> mnist.test.labels[:10:1][1:][0]
+array([0., 0., 1., 0., 0., 0., 0., 0., 0., 0.])
+
+ipdb> mnist.test.labels[:10:1][1:][0][0]
+0.0
+
+ipdb> mnist.test.labels[:10:1][1:][0][1]
+0.0
+
+ipdb> mnist.test.labels[:10:1][1:][0][10]
+*** IndexError: index 10 is out of bounds for axis 0 with size 10
+
+ipdb> np.nonzero(mnist.test.labels[:10:1])
+(array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), array([7, 2, 1, 0, 4, 1, 4, 9, 5, 9]))
+
+ipdb> np.nonzero(mnist.test.labels[:20:1])
+(array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+       17, 18, 19]), array([7, 2, 1, 0, 4, 1, 4, 9, 5, 9, 0, 6, 9, 0, 1, 5, 9, 7, 3, 4]))
+
+ipdb> np.nonzero(mnist.test.labels[:20:2])
+(array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), array([7, 1, 4, 4, 5, 0, 9, 1, 9, 3]))
+
+ipdb> np.nonzero(mnist.test.labels[:20:4])
+(array([0, 1, 2, 3, 4]), array([7, 4, 5, 9, 9]))
+
+ipdb> mnist.test.labels[:10:0]
+*** ValueError: slice step cannot be zero
+
+ipdb> mnist.test.labels[:10:1]                      #select rows 0 thru 9 (step of 1)
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
+       [0., 0., 0., 0., 0., 1., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.]])
+
+ipdb> mnist.test.labels[:10:2]                       #select rows 0, 2, 4, 6. 8
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 1., 0., 0., 0., 0.]])
+
+ipdb> mnist.test.labels[:10:5]                       #select rows 0, 5
+array([[0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+       [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.]])
+#
+#See
+#       https://docs.scipy.org/doc/numpy/reference/generated/numpy.nonzero.html
+#
+ipdb> np.nonzero(mnist.test.labels[:20:1])
+(array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]), 
+  array([7, 2, 1, 0, 4, 1, 4, 9, 5, 9, 0, 6, 9, 0, 1, 5, 9, 7, 3, 4]))
+
+ipdb> np.nonzero(mnist.test.labels[:20:1])[1:]
+(array([7, 2, 1, 0, 4, 1, 4, 9, 5, 9, 0, 6, 9, 0, 1, 5, 9, 7, 3, 4]),)
+
+ipdb> np.nonzero(mnist.test.labels[:20:1])[1:][0]           #NOTE: [0] Extracts the only element in the list 
+array([7, 2, 1, 0, 4, 1, 4, 9, 5, 9, 0, 6, 9, 0, 1, 5, 9, 7, 3, 4])
+
+ipdb> np.nonzero(mnist.test.labels[:20:1])[1]               #NOTE: This does the same as the above two steps
+array([7, 2, 1, 0, 4, 1, 4, 9, 5, 9, 0, 6, 9, 0, 1, 5, 9, 7, 3, 4])
+
+ipdb> np.nonzero(mnist.test.labels[:20:1])[1:][0][19]
+4
+ipdb> np.nonzero(mnist.test.labels[:20:1])[1][19]           #<<<<<<<<<<<<<<<<<<<<<<<<<<
+4
+
+ipdb> np.nonzero(mnist.test.labels[:20:1])[1:][0][18]
+3
+
+ipdb> np.nonzero(mnist.test.labels[:20:1])[1:][0][0]
+7
+
