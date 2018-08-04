@@ -67,7 +67,11 @@ def train():
             #embed.tensor_name = 'embedding:0' <<<<<<<<<<<<<<<<
         #
         #See https://www.tensorflow.org/versions/r1.1/get_started/embedding_viz#setup
-        embedding = tf.Variable(tf.stack(mnist.test.images[:FLAGS.max_steps], axis=0), trainable=False, name='embedding')
+        embedding = tf.Variable(\
+                        tf.stack(mnist.test.images[:FLAGS.max_steps], \
+                                 axis=0), \
+                        trainable=False, \
+                        name='embedding')
 
     with tf.name_scope('input_reshape'):
         image_shaped_input = tf.reshape(input_images, [-1, 28, 28, 1])
@@ -156,16 +160,26 @@ def train():
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     tf.summary.scalar('accuracy', accuracy)
 
-    # Merge all the summaries and write them out to /tmp/mnist_logs (by default)
+    # Merge all the summaries and write them out to FLAGS.log_dir
+    # tf.summary.merge_all() is a node on the graph. The tensor merged is evaluated by
+    #sess.run() below
     merged = tf.summary.merge_all()
-    train_writer = tf.summary.FileWriter(FLAGS.log_dir + '/train',
-                                          sess.graph)
-    test_writer = tf.summary.FileWriter(FLAGS.log_dir + '/test')
+    train_writer = tf.summary.FileWriter(\
+                            FLAGS.log_dir + \
+                            '/train',
+                            sess.graph) 
+    test_writer = tf.summary.FileWriter(\
+                            FLAGS.log_dir + \
+                            '/test') #Not interested in the graph when testing?
 
     tf.global_variables_initializer().run()
 
     saver = tf.train.Saver()
-    writer = tf.summary.FileWriter(FLAGS.log_dir + '/projector', sess.graph)
+    projection_writer = tf.summary.FileWriter(\
+                            FLAGS.log_dir + \
+                            '/projector' \
+                           , sess.graph     #Without sess.graph Projection is disabled.
+                            )
     # Add embedding tensorboard visualization. Need tensorflow version
     # >= 0.12.0RC0
     #See https://www.tensorflow.org/versions/r1.1/get_started/embedding_viz#setup
@@ -176,7 +190,7 @@ def train():
     embed.sprite.image_path = os.path.join(FLAGS.data_dir + '/mnist_10k_sprite.png')
     # Specify the width and height of a single thumbnail.
     embed.sprite.single_image_dim.extend([28, 28])
-    projector.visualize_embeddings(writer, config)
+    projector.visualize_embeddings(projection_writer, config)
 
     # Train the model, and also write summaries.
     # Every 10th step, measure test-set accuracy, and write test summaries

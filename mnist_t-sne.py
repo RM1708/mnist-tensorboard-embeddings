@@ -28,6 +28,7 @@ import sys
 import os
 import numpy as np
 from tensorflow.contrib.tensorboard.plugins import projector
+#from tensorboard.plugins import projector #This one appears as good
 
 import tensorflow as tf
 
@@ -47,11 +48,21 @@ def generate_embeddings():
     #results in "ValueError: No variables to save".
     #It is needed below.
     with tf.device("/cpu:0"):
-        embedding = tf.Variable(tf.stack(mnist.test.images[:FLAGS.max_steps], axis=0), trainable=False, name='embedding')
+#        embedding = tf.Variable(tf.stack(mnist.test.images[:FLAGS.max_steps], axis=0), \
+#                                trainable=False, \
+#                                #What-if this were True?
+#                                name='embedding')
+        embedding = tf.Variable(tf.convert_to_tensor(\
+                                    mnist.test.images[:FLAGS.max_steps]), \
+                                trainable=False, \
+                                #What-if this were True? Would not make sense.
+                                #This is input data. But if it were an embedding matrix
+                                #then the elements could be trainabe
+                                name='embedding')
 
     tf.global_variables_initializer().run()
 
-    saver = tf.train.Saver()
+    saver = tf.train.Saver() # all saveable objects will be saved.
     writer = tf.summary.FileWriter(FLAGS.log_dir + '/projector', sess.graph)
 
     # Add embedding tensorboard visualization. Need tensorflow version
@@ -67,7 +78,26 @@ def generate_embeddings():
     # Specify the width and height of a single thumbnail.
     embed.sprite.single_image_dim.extend([28, 28])
     projector.visualize_embeddings(writer, config)
-
+    
+    #https://www.tensorflow.org/api_docs/python/tf/train/Saver#save    
+    #save(
+    #    sess,
+    #    save_path,
+    #    global_step=None,
+    #    latest_filename=None,
+    #    meta_graph_suffix='meta',
+    #    write_meta_graph=True,
+    #    write_state=True,
+    #    strip_default_attrs=False
+    #)
+    #
+    #global_step: If provided the global step number is appended to 
+    #save_path to create the checkpoint filenames.
+    #
+    #This method runs the ops added by the constructor 
+    #for saving variables. It requires a session in 
+    #which the graph was launched
+    #
     saver.save(sess, os.path.join(
         FLAGS.log_dir, 'projector/a_model.ckpt'), global_step=FLAGS.max_steps)
 
@@ -84,7 +114,7 @@ def generate_metadata_file():
                 #For slice steps/strides see: 
                 #pg 203 pf Lutz, "Learning Python"
                 c = np.nonzero(mnist.test.labels[::1])[1:][0][i]
-                print('{}\n'.format(c))
+#                print('{}\n'.format(c))
                 f.write('{}\n'.format(c))
 
     save_metadata(FLAGS.log_dir + '/projector/metadata.tsv')
@@ -106,7 +136,7 @@ if __name__ == '__main__':
     parser.add_argument('--fake_data', nargs='?', const=True, type=bool,
                         default=False,
                         help='If true, uses fake data for unit testing.')
-    parser.add_argument('--max_steps', type=int, default=10000,
+    parser.add_argument('--max_steps', type=int, default=1000,
                         help='Number of steps to run trainer.')
     parser.add_argument('--data_dir', type=str, \
                         default='/home/rm/tmp/data/mnist_data/',
