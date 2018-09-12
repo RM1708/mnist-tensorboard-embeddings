@@ -62,7 +62,11 @@ def generate_embeddings():
 
     tf.global_variables_initializer().run()
 
-    saver = tf.train.Saver() # all saveable objects will be saved.
+    saver = tf.train.Saver() # all saveable objects will be saved. NOT TRUE.
+    #saver tensor object SAVES THE GRAPH.
+    #
+    #The writer tensor object is used to write out the data required for
+    # visualization by the tensorboard projector
     writer = tf.summary.FileWriter(FLAGS.log_dir + '/projector', sess.graph)
 
     # Add embedding tensorboard visualization. Need tensorflow version
@@ -140,7 +144,7 @@ if __name__ == '__main__':
                         help='Number of steps to run trainer.')
     parser.add_argument('--data_dir', type=str, \
                         default='/home/rm/tmp/data/mnist_data/',
-                        help='Directory for storing input data')
+                        help='Directory for input MNIST data files')
     parser.add_argument('--log_dir', type=str, \
                         default='/home/rm/logs/mnist_t-sne',
                         help='Summaries log directory')
